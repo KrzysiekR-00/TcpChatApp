@@ -14,13 +14,12 @@ var ipEndPoint = new IPEndPoint(IPAddress.Any, 13);
         using TcpClient handler = await listener.AcceptTcpClientAsync();
         await using NetworkStream stream = handler.GetStream();
 
-        var message = "Tcp message " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss.fff");
-        var dateTimeBytes = Encoding.UTF8.GetBytes(message);
-        await stream.WriteAsync(dateTimeBytes);
+        var buffer = new byte[1_024];
+        int received = await stream.ReadAsync(buffer);
 
-        Console.WriteLine("Message sent");
-        //Console.WriteLine("Message sent:");
-        //Console.WriteLine(message);
+        var message = Encoding.UTF8.GetString(buffer, 0, received);
+        Console.WriteLine(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss.fff") + " - Message received:");
+        Console.WriteLine(message);
     }
     finally
     {
@@ -51,9 +50,13 @@ Console.WriteLine("");
             Console.WriteLine(Encoding.UTF8.GetString(bytes, 0, bytes.Length));
         }
     }
-    catch (SocketException e)
+    catch (SocketException ex)
     {
-        Console.WriteLine(e);
+        Console.WriteLine($"Socket exception: {ex.Message}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Unexpected exception: {ex.Message}");
     }
     finally
     {

@@ -10,12 +10,11 @@ using System.Text;
     await client.ConnectAsync(ipEndPoint);
     await using NetworkStream stream = client.GetStream();
 
-    var buffer = new byte[1_024];
-    int received = await stream.ReadAsync(buffer);
+    var message = "Tcp message " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss.fff");
+    var dateTimeBytes = Encoding.UTF8.GetBytes(message);
+    await stream.WriteAsync(dateTimeBytes);
 
-    var message = Encoding.UTF8.GetString(buffer, 0, received);
-    Console.WriteLine(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss.fff") + " - Message received:");
-    Console.WriteLine(message);
+    Console.WriteLine("Message sent");
 }
 
 //
