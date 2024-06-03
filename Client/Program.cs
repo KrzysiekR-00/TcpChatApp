@@ -13,8 +13,7 @@ var buffer = new byte[1_024];
 int received = await stream.ReadAsync(buffer);
 
 var message = Encoding.UTF8.GetString(buffer, 0, received);
-Console.WriteLine($"Message received: \"{message}\"");
-// Sample output:
-//     Message received: "📅 8/22/2022 9:07:17 AM 🕛"
+Console.WriteLine(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss.fff") + " - Message received:");
+Console.WriteLine(message);
 
 Console.ReadKey();

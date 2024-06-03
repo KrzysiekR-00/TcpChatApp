@@ -12,13 +12,12 @@ try
     using TcpClient handler = await listener.AcceptTcpClientAsync();
     await using NetworkStream stream = handler.GetStream();
 
-    var message = $"📅 {DateTime.Now} 🕛";
+    var message = "Message " + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss.fff");
     var dateTimeBytes = Encoding.UTF8.GetBytes(message);
     await stream.WriteAsync(dateTimeBytes);
 
-    Console.WriteLine($"Sent message: \"{message}\"");
-    // Sample output:
-    //     Sent message: "📅 8/22/2022 9:07:17 AM 🕛"
+    Console.WriteLine("Message sent:");
+    Console.WriteLine(message);
 }
 finally
 {
