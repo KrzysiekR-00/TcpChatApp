@@ -2,36 +2,26 @@
 using System.Net.Sockets;
 using System.Text;
 
-var ipEndPoint = new IPEndPoint(IPAddress.Any, 11_000);
+var ipEndPoint = new IPEndPoint(IPAddress.Any, 13000);
+TcpListener listener = new(ipEndPoint);
 
-using Socket listener = new(
-    ipEndPoint.AddressFamily,
-    SocketType.Stream,
-    ProtocolType.Tcp);
-
-listener.Bind(ipEndPoint);
-listener.Listen(100);
-
-var handler = await listener.AcceptAsync();
-while (true)
+//try
 {
-    // Receive message.
-    var buffer = new byte[1_024];
-    var received = await handler.ReceiveAsync(buffer, SocketFlags.None);
-    var response = Encoding.UTF8.GetString(buffer, 0, received);
+    listener.Start();
 
-    var eom = "<|EOM|>";
-    if (response.IndexOf(eom) > -1 /* is end of message */)
-    {
-        Console.WriteLine(
-            $"Socket server received message: \"{response.Replace(eom, "")}\"");
+    using TcpClient handler = await listener.AcceptTcpClientAsync();
+    await using NetworkStream stream = handler.GetStream();
 
-        var ackMessage = "<|ACK|>";
-        var echoBytes = Encoding.UTF8.GetBytes(ackMessage);
-        await handler.SendAsync(echoBytes, 0);
-        Console.WriteLine(
-            $"Socket server sent acknowledgment: \"{ackMessage}\"");
+    var message = $"{handler.Client.RemoteEndPoint} connected at {DateTime.Now}";
+    var dateTimeBytes = Encoding.UTF8.GetBytes(message);
+    await stream.WriteAsync(dateTimeBytes);
 
-        //break;
-    }
+    Console.WriteLine($"Sent message:\r\n{message}");
 }
+//finally
+{
+    listener.Stop();
+}
+
+Console.WriteLine("\nHit enter to continue...");
+Console.Read();
