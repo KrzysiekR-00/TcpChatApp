@@ -28,7 +28,7 @@ TcpListener listener = new(ipEndPoint);
 
 Console.WriteLine("\nPress any key to quit...");
 var key = Console.ReadKey();
-Console.WriteLine($"\nkey: {key}");
+//Console.WriteLine($"\nkey: {key}");
 
 listener.Stop();
 
@@ -53,12 +53,14 @@ async void HandleConnectedClient(TcpClient handler)
     var message = $"{handler.Client.RemoteEndPoint} connected at {DateTime.Now}";
     var dateTimeBytes = Encoding.UTF8.GetBytes(message);
     await stream.WriteAsync(dateTimeBytes);
-
     Console.WriteLine($"Sent message:\r\n{message}");
 
-    var buffer = new byte[1_024];
-    int received = await stream.ReadAsync(buffer);
+    while (true)
+    {
+        var buffer = new byte[1_024];
+        int received = await stream.ReadAsync(buffer);
 
-    var messageReceived = Encoding.UTF8.GetString(buffer, 0, received);
-    Console.WriteLine($"{DateTime.Now} Message received:\r\n{messageReceived}");
+        var messageReceived = Encoding.UTF8.GetString(buffer, 0, received);
+        Console.WriteLine($"{DateTime.Now} Message received:\r\n{messageReceived}");
+    }
 }
