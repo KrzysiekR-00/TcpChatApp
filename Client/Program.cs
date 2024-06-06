@@ -15,5 +15,13 @@ int received = await stream.ReadAsync(buffer);
 var message = Encoding.UTF8.GetString(buffer, 0, received);
 Console.WriteLine($"{DateTime.Now} Message received:\r\n{message}");
 
-Console.WriteLine("\n Press Enter to continue...");
+Console.WriteLine("\nSend message:");
+var messageToSend = Console.ReadLine();
+if (!string.IsNullOrEmpty(messageToSend))
+{
+    var bytes = Encoding.UTF8.GetBytes(messageToSend);
+    await stream.WriteAsync(bytes);
+}
+
+Console.WriteLine("\nPress any key to quit...");
 Console.Read();

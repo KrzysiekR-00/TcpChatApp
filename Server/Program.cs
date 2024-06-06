@@ -9,7 +9,45 @@ TcpListener listener = new(ipEndPoint);
 {
     listener.Start();
 
-    using TcpClient handler = await listener.AcceptTcpClientAsync();
+    //using TcpClient handler = await listener.AcceptTcpClientAsync();
+
+    AcceptClient();
+
+    //await using NetworkStream stream = handler.GetStream();
+
+    //var message = $"{handler.Client.RemoteEndPoint} connected at {DateTime.Now}";
+    //var dateTimeBytes = Encoding.UTF8.GetBytes(message);
+    //await stream.WriteAsync(dateTimeBytes);
+
+    //Console.WriteLine($"Sent message:\r\n{message}");
+}
+//finally
+{
+    //listener.Stop();
+}
+
+Console.WriteLine("\nPress any key to quit...");
+var key = Console.ReadKey();
+Console.WriteLine($"\nkey: {key}");
+
+listener.Stop();
+
+void AcceptClient()
+{
+    listener.BeginAcceptTcpClient(OnClientConnect, null);
+}
+
+void OnClientConnect(IAsyncResult asyn)
+{
+    TcpClient clientSocket = listener.EndAcceptTcpClient(asyn);
+
+    HandleConnectedClient(clientSocket);
+
+    AcceptClient();
+}
+
+async void HandleConnectedClient(TcpClient handler)
+{
     await using NetworkStream stream = handler.GetStream();
 
     var message = $"{handler.Client.RemoteEndPoint} connected at {DateTime.Now}";
@@ -17,11 +55,10 @@ TcpListener listener = new(ipEndPoint);
     await stream.WriteAsync(dateTimeBytes);
 
     Console.WriteLine($"Sent message:\r\n{message}");
-}
-//finally
-{
-    listener.Stop();
-}
 
-Console.WriteLine("\nHit enter to continue...");
-Console.Read();
+    var buffer = new byte[1_024];
+    int received = await stream.ReadAsync(buffer);
+
+    var messageReceived = Encoding.UTF8.GetString(buffer, 0, received);
+    Console.WriteLine($"{DateTime.Now} Message received:\r\n{messageReceived}");
+}
