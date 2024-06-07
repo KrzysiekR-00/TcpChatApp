@@ -1,6 +1,8 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using WpfClient.ViewModels;
+using WpfClient.Views;
 
 namespace WpfClient
 {
@@ -9,6 +11,13 @@ namespace WpfClient
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            var window = new MainWindow();
+            var viewModel = new MainWindowViewModel();
+            window.DataContext = viewModel;
+            window.Show();
+        }
     }
-
 }
