@@ -58,7 +58,24 @@ async void HandleConnectedClient(TcpClient handler)
     while (true)
     {
         var buffer = new byte[1_024];
-        int received = await stream.ReadAsync(buffer);
+        int received = 0;
+
+        try
+        {
+            received = await stream.ReadAsync(buffer);
+        }
+        catch
+        {
+            if (received > 0)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                Console.WriteLine($"{DateTime.Now} Client disconnected");
+                break;
+            }
+        }
 
         var messageReceived = Encoding.UTF8.GetString(buffer, 0, received);
         Console.WriteLine($"{DateTime.Now} Message received:\r\n{messageReceived}");
