@@ -3,17 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfClient"
+        xmlns:local="clr-namespace:WpfClient" xmlns:viewmodels="clr-namespace:WpfClient.ViewModels" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         mc:Ignorable="d"
         Title="Chat" Height="450" Width="800">
     <Grid>
         <DockPanel>
             <DockPanel DockPanel.Dock="Bottom">
                 <TextBlock DockPanel.Dock="Left" Margin="5" Text="Message:" VerticalAlignment="Center" />
-                <Button DockPanel.Dock="Right" Margin="5" Padding="15, 5" Content="Send" />
-                <TextBox Margin="5" VerticalContentAlignment="Center" />
+                <Button DockPanel.Dock="Right" Margin="5" Padding="15, 5" Content="Send" Command="{Binding SendMessageCommand}" />
+                <TextBox Margin="5" VerticalContentAlignment="Center" Text="{Binding MessageToSend, Mode=TwoWay}" />
             </DockPanel>
-            <TextBlock Margin="5" />
+            <TextBlock Margin="5" Text="{Binding Conversation, Mode=OneWay}" />
         </DockPanel>
     </Grid>
 </Window>

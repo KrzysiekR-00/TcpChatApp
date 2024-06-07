@@ -1,12 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows.Input;
 
 namespace WpfClient.ViewModels
 {
-    class MainWindowViewModel
+    internal class MainWindowViewModel : ViewModelBase
     {
+        private string _conversation;
+        private string _messageToSend;
+
+        public string Conversation
+        {
+            get => _conversation;
+            private set
+            {
+                _conversation = value;
+                OnPropertyChanged(nameof(Conversation));
+            }
+        }
+
+        public string MessageToSend
+        {
+            get => _messageToSend;
+            set
+            {
+                _messageToSend = value;
+                OnPropertyChanged(nameof(MessageToSend));
+            }
+        }
+
+        public ICommand SendMessageCommand { get; private set; }
+
+        internal MainWindowViewModel()
+        {
+            _conversation = string.Empty;
+            _messageToSend = string.Empty;
+            SendMessageCommand = new RelayCommand(_ => SendMessage());
+        }
+
+        private void SendMessage()
+        {
+            Conversation += MessageToSend + "\r\n";
+            MessageToSend = string.Empty;
+        }
     }
 }
