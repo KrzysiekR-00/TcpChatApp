@@ -51,8 +51,8 @@ async void HandleConnectedClient(TcpClient handler)
     await using NetworkStream stream = handler.GetStream();
 
     var message = $"{handler.Client.RemoteEndPoint} connected at {DateTime.Now}";
-    var dateTimeBytes = Encoding.UTF8.GetBytes(message);
-    await stream.WriteAsync(dateTimeBytes);
+    var bytes = Encoding.UTF8.GetBytes(message);
+    await stream.WriteAsync(bytes);
     Console.WriteLine($"Sent message:\r\n{message}");
 
     while (true)
@@ -78,6 +78,11 @@ async void HandleConnectedClient(TcpClient handler)
         }
 
         var messageReceived = Encoding.UTF8.GetString(buffer, 0, received);
-        Console.WriteLine($"{DateTime.Now} Message received:\r\n{messageReceived}");
+        //Console.WriteLine($"{DateTime.Now} Message received:\r\n{messageReceived}");
+
+        var messageToSend = DateTime.Now + " " + handler.Client.RemoteEndPoint + ": " + messageReceived;
+        Console.WriteLine(messageToSend);
+        var bytes2 = Encoding.UTF8.GetBytes(messageToSend);
+        await stream.WriteAsync(bytes2);
     }
 }

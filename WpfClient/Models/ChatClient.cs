@@ -16,6 +16,8 @@ namespace WpfClient.Models
 
         internal bool IsInitialized { get; private set; }
 
+        internal Action<string> OnMessageReceived;
+
         internal ChatClient() 
         {
         
@@ -40,18 +42,26 @@ namespace WpfClient.Models
             stream = client.GetStream();
 
             IsInitialized = true;
+
+            while(true)
+            {
+                var buffer = new byte[1_024];
+                int received = await stream.ReadAsync(buffer);
+                var message = Encoding.UTF8.GetString(buffer, 0, received);
+                OnMessageReceived?.Invoke(message);
+            }
         }
 
-        internal async Task<string> Receive()
-        {
-            var buffer = new byte[1_024];
-            int received = await stream.ReadAsync(buffer);
+        //internal async Task<string> Receive()
+        //{
+        //    var buffer = new byte[1_024];
+        //    int received = await stream.ReadAsync(buffer);
 
-            //var message = Encoding.UTF8.GetString(buffer, 0, received);
-            //Console.WriteLine($"{DateTime.Now} Message received:\r\n{message}");
+        //    //var message = Encoding.UTF8.GetString(buffer, 0, received);
+        //    //Console.WriteLine($"{DateTime.Now} Message received:\r\n{message}");
 
-            return Encoding.UTF8.GetString(buffer, 0, received);
-        }
+        //    return Encoding.UTF8.GetString(buffer, 0, received);
+        //}
 
         internal async Task Send(string message)
         {
