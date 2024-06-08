@@ -44,7 +44,7 @@ namespace WpfClient.ViewModels
         private async Task Initialize()
         {
             await _chatClient.Initialize();
-            _conversation = await _chatClient.Receive();
+            Conversation = await _chatClient.Receive();
         }
 
         private void SendMessage()
