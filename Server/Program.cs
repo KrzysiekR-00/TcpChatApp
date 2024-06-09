@@ -1,9 +1,13 @@
-﻿using System.Net;
+﻿using System.IO;
+using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
 var ipEndPoint = new IPEndPoint(IPAddress.Any, 13000);
 TcpListener listener = new(ipEndPoint);
+
+List<NetworkStream> connectedClients = new List<NetworkStream>();
 
 //try
 {
@@ -48,7 +52,11 @@ void OnClientConnect(IAsyncResult asyn)
 
 async void HandleConnectedClient(TcpClient handler)
 {
+    
+
     await using NetworkStream stream = handler.GetStream();
+
+    connectedClients.Add(stream);
 
     var message = $"{handler.Client.RemoteEndPoint} connected at {DateTime.Now}";
     var bytes = Encoding.UTF8.GetBytes(message);
@@ -72,7 +80,8 @@ async void HandleConnectedClient(TcpClient handler)
             }
             else
             {
-                Console.WriteLine($"{DateTime.Now} Client disconnected");
+                connectedClients.Remove(stream);
+                Console.WriteLine($"{DateTime.Now} {handler.Client.RemoteEndPoint} client disconnected");
                 break;
             }
         }
@@ -83,6 +92,16 @@ async void HandleConnectedClient(TcpClient handler)
         var messageToSend = DateTime.Now + " " + handler.Client.RemoteEndPoint + ": " + messageReceived;
         Console.WriteLine(messageToSend);
         var bytes2 = Encoding.UTF8.GetBytes(messageToSend);
-        await stream.WriteAsync(bytes2);
+        SendToAllConnectedClients(bytes2);
+        //await stream.WriteAsync(bytes2);
+    }
+}
+
+async void SendToAllConnectedClients(byte[] bytes)
+{
+    foreach (var client in connectedClients)
+    {
+        //await using NetworkStream stream = client.GetStream();
+        await client.WriteAsync(bytes);
     }
 }
