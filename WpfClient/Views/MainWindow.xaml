@@ -20,7 +20,9 @@
                     </TextBox.InputBindings>
                 </TextBox>
             </DockPanel>
-            <TextBlock Margin="5" Text="{Binding Conversation, Mode=OneWay}" />
+            <ScrollViewer Margin="5" VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding Conversation, Mode=OneWay, NotifyOnTargetUpdated=True}" TextWrapping="Wrap" TargetUpdated="ScrollParentToEnd" />
+            </ScrollViewer>
         </DockPanel>
     </Grid>
 </Window>

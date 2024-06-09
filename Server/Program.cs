@@ -5,7 +5,7 @@ using System.Text;
 var ipEndPoint = new IPEndPoint(IPAddress.Any, 13000);
 TcpListener listener = new(ipEndPoint);
 
-List<NetworkStream> connectedClients = new List<NetworkStream>();
+List<NetworkStream> connectedClients = [];
 
 //try
 {

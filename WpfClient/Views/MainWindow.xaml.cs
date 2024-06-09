@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace WpfClient.Views
 {
@@ -10,6 +11,11 @@ namespace WpfClient.Views
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void ScrollParentToEnd(object sender, System.Windows.Data.DataTransferEventArgs e)
+        {
+            ((sender as FrameworkElement)?.Parent as ScrollViewer)?.ScrollToEnd();
         }
     }
 }
