@@ -99,9 +99,7 @@ void ShowMenu()
 
 void Close()
 {
-    Console.WriteLine(listener.Server.IsBound);
     listener.Stop();
-    Console.WriteLine(listener.Server.IsBound);
 }
 
 void ShowConnectedClientsList()
