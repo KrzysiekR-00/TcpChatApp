@@ -30,9 +30,34 @@ List<NetworkStream> connectedClients = [];
     //listener.Stop();
 }
 
-bool exit = false;
+ShowMenu();
 
-while (!exit)
+//bool exit = false;
+
+//while (!exit)
+//{
+//    Console.WriteLine("\r\nHelp:");
+//    Console.WriteLine("Press Q to quit.");
+//    Console.WriteLine("Press L to show connected clients.");
+
+//    var key = Console.ReadKey().Key;
+
+//    switch (key)
+//    {
+//        case ConsoleKey.L:
+//            ShowConnectedClientsList();
+//            break;
+//        case ConsoleKey.Q:
+//            exit = true;
+//            break;
+//    }
+//}
+
+listener.Stop();
+
+return 0;
+
+void ShowMenu()
 {
     Console.WriteLine("\r\nHelp:");
     Console.WriteLine("Press Q to quit.");
@@ -42,17 +67,17 @@ while (!exit)
 
     switch (key)
     {
+        case ConsoleKey.Q:
+            break;
         case ConsoleKey.L:
             ShowConnectedClientsList();
+            ShowMenu();
             break;
-        case ConsoleKey.Q:
-            exit = true;
+        default:
+            ShowMenu();
             break;
     }
-
 }
-
-listener.Stop();
 
 void AcceptNextClient()
 {
@@ -74,13 +99,10 @@ async void HandleConnectedClient(TcpClient connectedClient)
 
     connectedClients.Add(stream);
 
-    //var message = $"{connectedClient.Client.RemoteEndPoint} connected at {DateTime.Now}";
-    //var bytes = Encoding.UTF8.GetBytes(message);
-    //await stream.WriteAsync(bytes);
-    //Console.WriteLine($"Sent message:\r\n{message}");
-
     var connectedMessage = DateTime.Now + " - " + connectedClient.Client.RemoteEndPoint + " - connected";
     SendToAllConnectedClients(connectedMessage);
+
+    //ReadNextMessage();
 
     while (true)
     {
@@ -114,6 +136,17 @@ async void HandleConnectedClient(TcpClient connectedClient)
         SendToAllConnectedClients(messageToSend);
     }
 }
+
+//void ReadNextMessage(NetworkStream stream)
+//{
+//    var buffer = new byte[1_024];
+//    stream.BeginRead(buffer, 0, buffer.Length, HandleMessage, null);
+//}
+
+//void HandleMessage(IAsyncResult asyncResult)
+//{
+
+//}
 
 async void SendToAllConnectedClients(string messageToSend)
 {
