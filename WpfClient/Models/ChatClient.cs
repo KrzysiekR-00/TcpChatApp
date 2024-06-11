@@ -9,7 +9,7 @@ using System.IO;
 
 namespace WpfClient.Models
 {
-    internal class ChatClient
+    internal class ChatClient : IDisposable
     {
         private TcpClient client;
         private NetworkStream stream;
@@ -18,15 +18,24 @@ namespace WpfClient.Models
 
         internal Action<string> OnMessageReceived;
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                stream.Dispose();
+                client.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         internal ChatClient() 
         {
         
-        }
-
-        ~ChatClient()
-        {
-            stream.Dispose();
-            client.Dispose();
         }
 
         internal async Task Initialize()
