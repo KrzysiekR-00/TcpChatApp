@@ -16,6 +16,11 @@ namespace WpfClient
             var viewModel = new MainWindowViewModel();
             window.DataContext = viewModel;
             window.Show();
+
+            Exit += (sender, args) =>
+            {
+                viewModel.Dispose();
+            };
         }
     }
 }

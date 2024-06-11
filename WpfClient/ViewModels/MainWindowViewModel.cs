@@ -3,7 +3,7 @@ using WpfClient.Models;
 
 namespace WpfClient.ViewModels
 {
-    internal class MainWindowViewModel : ViewModelBase
+    internal class MainWindowViewModel : ViewModelBase, IDisposable
     {
         private ChatClient _chatClient = new();
 
@@ -39,6 +39,20 @@ namespace WpfClient.ViewModels
             SendMessageCommand = new RelayCommand(_ => SendMessage());
 
             Initialize();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _chatClient.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         private async Task Initialize()

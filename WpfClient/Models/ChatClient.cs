@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace WpfClient.Models
 {
@@ -33,9 +28,9 @@ namespace WpfClient.Models
             GC.SuppressFinalize(this);
         }
 
-        internal ChatClient() 
+        internal ChatClient()
         {
-        
+
         }
 
         internal async Task Initialize()
@@ -47,12 +42,12 @@ namespace WpfClient.Models
             client = new();
             await client.ConnectAsync(iPEndPoint);
             //await using NetworkStream stream = client.GetStream();
-            
+
             stream = client.GetStream();
 
             IsInitialized = true;
 
-            while(true)
+            while (true)
             {
                 var buffer = new byte[1_024];
                 int received = await stream.ReadAsync(buffer);
@@ -60,17 +55,6 @@ namespace WpfClient.Models
                 OnMessageReceived?.Invoke(message);
             }
         }
-
-        //internal async Task<string> Receive()
-        //{
-        //    var buffer = new byte[1_024];
-        //    int received = await stream.ReadAsync(buffer);
-
-        //    //var message = Encoding.UTF8.GetString(buffer, 0, received);
-        //    //Console.WriteLine($"{DateTime.Now} Message received:\r\n{message}");
-
-        //    return Encoding.UTF8.GetString(buffer, 0, received);
-        //}
 
         internal async Task Send(string message)
         {
