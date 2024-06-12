@@ -5,7 +5,7 @@ namespace WpfClient.ViewModels
 {
     internal class MainWindowViewModel : ViewModelBase, IDisposable
     {
-        private ChatClient _chatClient = new();
+        private ChatClient _chatClient;
 
         private string _conversation;
         private string _messageToSend;
@@ -34,11 +34,18 @@ namespace WpfClient.ViewModels
 
         internal MainWindowViewModel()
         {
+            _chatClient = null!;
             _conversation = string.Empty;
             _messageToSend = string.Empty;
             SendMessageCommand = new RelayCommand(_ => SendMessage());
 
-            Initialize();
+            Task.Run(() => Initialize());
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -49,17 +56,9 @@ namespace WpfClient.ViewModels
             }
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         private async Task Initialize()
         {
-            _chatClient.OnMessageReceived += MessageReceived;
-            await _chatClient.Initialize();
-            //Conversation = await _chatClient.Receive();
+            _chatClient = await ChatClient.CreateAndInitialize(MessageReceived);
         }
 
         private void MessageReceived(string message)
@@ -69,11 +68,12 @@ namespace WpfClient.ViewModels
 
         private void SendMessage()
         {
-            //Conversation += MessageToSend + "\r\n";
-            //MessageToSend = string.Empty;
-
-            _chatClient.Send(MessageToSend);
-            MessageToSend = string.Empty;
+            Task.Run(async () =>
+            {
+                var messageToSend = MessageToSend;
+                MessageToSend = string.Empty;
+                await _chatClient.Send(messageToSend);
+            });
         }
     }
 }

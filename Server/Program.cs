@@ -36,6 +36,11 @@ async Task HandleConnectedClient(TcpClient connectedClient)
     var connectedMessage = DateTime.Now + " - " + connectedClient.Client.RemoteEndPoint + " - connected";
     await SendToAllConnectedClients(connectedMessage);
 
+    await StartReceiingMessages(stream, connectedClient);
+}
+
+async Task StartReceiingMessages(NetworkStream stream, TcpClient connectedClient)
+{
     while (listener.Server.IsBound)
     {
         var buffer = new byte[1_024];
