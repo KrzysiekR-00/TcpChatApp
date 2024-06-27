@@ -69,7 +69,7 @@ async Task StartReceiingMessages(NetworkStream stream, TcpClient connectedClient
 
 async Task SendToAllConnectedClients(string messageToSend)
 {
-    Console.WriteLine("\r\nSend to all connected clients:\r\n" + messageToSend);
+    Console.WriteLine(Environment.NewLine + "Send to all connected clients:" + Environment.NewLine + messageToSend);
 
     var bytes = Encoding.UTF8.GetBytes(messageToSend);
 
@@ -81,7 +81,7 @@ async Task SendToAllConnectedClients(string messageToSend)
 
 void ShowMenu()
 {
-    Console.WriteLine("\r\nHelp:");
+    Console.WriteLine(Environment.NewLine + "Help:");
     Console.WriteLine("Press Q to quit.");
     Console.WriteLine("Press L to show connected clients.");
 
@@ -109,7 +109,7 @@ void Close()
 
 void ShowConnectedClientsList()
 {
-    Console.WriteLine("\r\nConnected clients: " + connectedClients.Count);
+    Console.WriteLine(Environment.NewLine + "Connected clients: " + connectedClients.Count);
     foreach (var client in connectedClients)
     {
         Console.WriteLine(client.Socket.RemoteEndPoint);

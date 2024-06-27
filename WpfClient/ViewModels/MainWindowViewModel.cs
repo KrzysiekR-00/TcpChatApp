@@ -63,7 +63,7 @@ namespace WpfClient.ViewModels
 
         private void MessageReceived(string message)
         {
-            Conversation += "\r\n" + message;
+            Conversation += Environment.NewLine + message;
         }
 
         private void SendMessage()
